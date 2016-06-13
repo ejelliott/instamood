@@ -3,12 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <title>Instamood</title>
-  <!-- TODO: Include Bootstrap -->
-  <!-- TODO: Link your stylesheet -->
+  <link rel="stylesheet" href="./style.css">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
   <script src="./script.js"></script>
 </head>
 <body>
-	<!-- put stuff here -->
+  <div class="container page">
+    <div class="row content">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="wrapper">
+          <h1>Instamood</h1>
+          <div class="stats-bar">
+            <div class="stat" id="ego">Ego Score: </div>
+            <div class="stat" id="pop">Popularity: </div>
+            <div class="stat" id="days">Most Active Day: </div>
+            <div class="stat" id="brevity">Brevity: </div>
+            <div class="stat" id="thirst">Visibility Thirst: </div>
+            <div class="sentiment">Sentiment Score: </div>
+          </div>
+          <div id="list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

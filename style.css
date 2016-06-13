@@ -1,1 +1,49 @@
 /*you fill this in*/
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+.content {
+  background-color: #f1f1f1;
+}
+
+img {
+  width: 500px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  margin-left: 125px;
+}
+
+.caption {
+  padding-top: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.stats-bar {
+  text-align: center;
+  background-color: #D4E3C9;
+  width: 500px;
+  margin-left: 125px;
+}
+
+.stats {
+  font-size: 16px;
+}
+
+@media (max-width: 780px) {
+  img {
+    width: 400px;
+    height: auto;
+  } 
+
+  .stats-bar {
+    width: 400px;
+  }
+}
