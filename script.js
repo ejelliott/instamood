@@ -13,25 +13,35 @@ $(document).ready(function() {
   }
   token = token.replace("#", "?"); // Prepare for query parameter
   var mediaUrl = API_DOMAIN + RECENT_MEDIA_PATH + token;
-
+  var picURL = "https://scontent.cdninstagram.com/t51.2885-15/e35/13129925_1403880246304262_298806272_n.jpg";
+  var cUrl = "https://api.clarifai.com/v1/tag?url="+ picURL + "&access_token=VmVOmxjG2GnCtk6IS0chKePkTJMuQN";
   //Call the instagram api
   $.ajax({
     method: "GET",
     url: mediaUrl,
     dataType: "jsonp",
     success: function(response)
-      { 
-        handleResponse(response);
-        handleSentiment(response); 
-      },
+    { 
+      handleResponse(response);
+      handleSentiment(response); 
+    },
     error: function() {
       alert("there has been an error...")
     }
   });
+
+  $.ajax({
+    url: cUrl, // The URL you are requesting
+    method: "GET",
+    success: handleTag,// A function that is run when the request is complete
+    error: function(error) {
+      alert("there has been an error...");
+    }
+  });
+
 }); 
 
 function handleResponse(response) {
-  // console.log(response);
 
   //Get number of pictures
   NUMBER_OF_PICS = response.data.length;
@@ -112,9 +122,9 @@ function handleResponse(response) {
   */
   var hashtagCount = 0;
   for (var i = 0; i < NUMBER_OF_PICS; i++) {
-      hashtagCount += response.data[i].tags.length;
+    hashtagCount += response.data[i].tags.length;
       // console.log(hashtagCount);
-  }
+    }
   // var thirstScore = Math.round(hashtagCount / NUMBER_OF_PICS);
   var thirstScore = (hashtagCount / NUMBER_OF_PICS);
 
@@ -145,11 +155,24 @@ function handleSentiment (response) {
         alert("there has been an error...");
       }
     });
+    var picURL = val.images.standard_resolution.url;
+    picURL = picURL.split("?");
+    var cUrl = "https://api.clarifai.com/v1/tag?url="+ picURL[0] + "&access_token=VmVOmxjG2GnCtk6IS0chKePkTJMuQN";
+    
+    $.ajax({
+      url: cUrl, // The URL you are requesting
+      method: "GET",
+      success: function (response) {
+        handleTag(response, i) // A function that is run when the request is complete
+      },
+      error: function(error) {
+        alert("there has been an error...");
+      }
+    });
   });
 }
 
 function sentimentAnalysis(data, index) {
-  console.log(data);
   var newScore = $("<div class=sent></div>").html("Sentiment Score: " + data.score);
   $("#pic-" + index).append(newScore);
   all_scores.push(newScore);
@@ -161,4 +184,12 @@ function addSentiment(score) {
   total_sentiment = (total_sentiment * caption_count) + score;
   total_sentiment /= caption_count;
   $("#sentiment").html(total_sentiment);
+}
+
+function handleTag(response, index) {
+  var tags = $("<div class=tags></div>").html("Tags: ");
+  for (var i=0; i<5; i++) {
+    $(tags).append(response.results[0].result.tag.classes[i] + ", ");
+  }
+  $("#pic-" + index).append(tags);
 }
