@@ -3,6 +3,7 @@ var RECENT_MEDIA_PATH = "/users/self/media/recent";
 var NUMBER_OF_PICS;
 var sentscores = 0;
 var caption_count = 0;
+var all_scores = [];
 // what do you think a variable in all caps means?
 
 $(document).ready(function() {
@@ -30,7 +31,7 @@ $(document).ready(function() {
 }); 
 
 function handleResponse(response) {
-  console.log(response);
+  // console.log(response);
 
   //Get number of pictures
   NUMBER_OF_PICS = response.data.length;
@@ -39,9 +40,11 @@ function handleResponse(response) {
   for (var i = 0; i < response.data.length; i++) {
     var link = response.data[i].images.standard_resolution.url;
     var newImage = $("<img class=img-fluid img-center>").attr("src", link);
+    // newImage.attr("id", "pic-" + i);
     $("#list").append(newImage);
     if (response.data[i].caption != null) {
       var caption = $("<div class=caption></div>").html(response.data[i].caption.text)
+      caption.attr("id", "pic-" + i);
       $("#list").append(caption);
     }
   }
@@ -122,10 +125,7 @@ function handleResponse(response) {
 
 function handleSentiment (response) {
   $.each(response.data, function(i, val) {
-      if (val.caption != null)
-        var caption = val.caption.text;
-      else caption = "";  
-      console.log(caption);  
+    var caption = val.caption.text;  
     // Make call to the sentiment API
     var sentURL = "https://twinword-sentiment-analysis.p.mashape.com/analyze/"
     $.ajax({
@@ -134,28 +134,24 @@ function handleSentiment (response) {
       headers: { "X-Mashape-Key": "vRCyNb1GSDmshH1wdJ4YRG5QM8oVp10uWfwjsnzere3HiJYfCq" },
       data: { text : caption},
       success: function (response) {
-        sentimentAnalysis(response);
-        console.log(response);
+        sentimentAnalysis(response, i);
       },
       error: function(response) {
         alert("there has been an error...");
       }
     });
   });
-  /*var sentimentscore = Math.round(SENTSCORE / CAPTION_COUNT);
-  console.log(sentimentscore);
-  $("#sentiment").append(sentimentscore);*/
+  var sum = 0;
+  for (var i=0;i<all_scores.length;i++) {
+    sum += all_scores[i];
+  }
+
+  $("#sentiment").append(sum/all_scores.length);
 }
 
-function sentimentAnalysis(data) {
-
-  // if (data.score != 0) {
-    // console.log(data);
-    // caption_count++;
-    // console.log(caption_count);
-    // sentscores += data.score;
-    // console.log(sentscores);
-  // }
+function sentimentAnalysis(data, index) {
+  console.log(data);
+  var newScore = $("<div class=sent></div>").html(data.score);
+  $("#pic-" + index).append(newScore);
+  all_scores.push(newScore);
 }
-
-
