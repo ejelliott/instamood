@@ -1,7 +1,7 @@
 var API_DOMAIN = "https://api.instagram.com/v1";
 var RECENT_MEDIA_PATH = "/users/self/media/recent";
 var NUMBER_OF_PICS;
-var sentscores = 0;
+var total_sentiment = 0;
 var caption_count = 0;
 var all_scores = [];
 // what do you think a variable in all caps means?
@@ -44,9 +44,12 @@ function handleResponse(response) {
     $("#list").append(newImage);
     if (response.data[i].caption != null) {
       var caption = $("<div class=caption></div>").html(response.data[i].caption.text)
-      caption.attr("id", "pic-" + i);
-      $("#list").append(caption);
     }
+    else {
+      var caption = $("<div class=caption></div>").html("");
+    }
+    caption.attr("id", "pic-" + i);
+    $("#list").append(caption);
   }
 
   /* GENERATE STATS
@@ -125,7 +128,9 @@ function handleResponse(response) {
 
 function handleSentiment (response) {
   $.each(response.data, function(i, val) {
-    var caption = val.caption.text;  
+    if (val.caption != null)
+      var caption = val.caption.text; 
+    else var caption = "";
     // Make call to the sentiment API
     var sentURL = "https://twinword-sentiment-analysis.p.mashape.com/analyze/"
     $.ajax({
@@ -141,17 +146,19 @@ function handleSentiment (response) {
       }
     });
   });
-  var sum = 0;
-  for (var i=0;i<all_scores.length;i++) {
-    sum += all_scores[i];
-  }
-
-  $("#sentiment").append(sum/all_scores.length);
 }
 
 function sentimentAnalysis(data, index) {
   console.log(data);
-  var newScore = $("<div class=sent></div>").html(data.score);
+  var newScore = $("<div class=sent></div>").html("Sentiment Score: " + data.score);
   $("#pic-" + index).append(newScore);
   all_scores.push(newScore);
+  addSentiment(data.score);
+}
+
+function addSentiment(score) {
+  caption_count++;
+  total_sentiment = (total_sentiment * caption_count) + score;
+  total_sentiment /= caption_count;
+  $("#sentiment").html(total_sentiment);
 }
